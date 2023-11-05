@@ -1,0 +1,17 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+   <ul>
+    {% for pet in pets %}
+        <li><a href="/pets/{{pet.id}}">{{pet.name}}    
+        <img src='{{pet.photo_url}}'>
+        {% if pet.available %}
+            <p><b>{{pet.available}}</b></p>
+        {% endif %}
+         </li>
+    {% endfor %}
+
+</ul>
+{% endblock %}
