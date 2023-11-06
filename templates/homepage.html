@@ -3,15 +3,21 @@
 
 {% block content %}
 
-   <ul>
+
     {% for pet in pets %}
-        <li><a href="/pets/{{pet.id}}">{{pet.name}}    
-        <img src='{{pet.photo_url}}'>
+    <div class="col-3">
+         
+        <img class='img-thumbnail' src='{{pet.photo_url}}'>
+        <a href="/pets/{{pet.id}}">{{pet.name}}</a>
         {% if pet.available %}
-            <p><b>{{pet.available}}</b></p>
+            <p><b>{{pet.name}}</b>is available.</p>
         {% endif %}
-         </li>
+    </div>
+        {% else %}
+        <div class="col-12">No Pets Yet.</div>
     {% endfor %}
 
-</ul>
+    <form action="/add">
+    <button>Add Pet</button>
+    </form>
 {% endblock %}

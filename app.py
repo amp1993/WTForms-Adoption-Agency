@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash
 from models import db, connect_db, Pet
-from forms import PetAdoptionForm
+from forms import PetAdoptionForm, EditPetForm
 
 
 app = Flask(__name__)
@@ -39,34 +39,22 @@ def add_pet():
             photo_url=form.photo_url.data,
             age=form.age.data,
             notes=form.notes.data,
-            available=form.available.data
         )
 
         db.session.add(new_pet)
         db.session.commit()
-        flash(f'New {new_pet.name} added.')
         return redirect('/')
     else:
-        return render_template('pet_form.html', form=form)
+        return render_template('pet_add_form.html', form=form)
     
-    return render_template('pet_form.html',form=form)
 
-@app.route('/pets/<int:pet_id>', methods=['GET'])
-def show_pet_details(pet_id):
+@app.route('/pets/<int:pet_id>', methods=['GET', 'POST'])
+def edit_pet(pet_id):
     
-     # Display Form
-    pet=Pet.query.get_or_404(pet_id)
-    form=PetAdoptionForm(obj=pet)
-    
-    return render_template('pet_details.html',pet=pet,form=form)
-    
-@app.route('/pets/<int:pet_id>', methods=['POST'])
-def edit_pet_details(pet_id):
-    
-     # Edit Form
+     # Display edit form and commit changes. 
      
     pet=Pet.query.get_or_404(pet_id)
-    form=PetAdoptionForm(obj=pet)
+    form=EditPetForm(obj=pet)
     
     if form.validate_on_submit():
         pet.photo_url=form.photo_url.data,
@@ -77,12 +65,19 @@ def edit_pet_details(pet_id):
         return redirect ('/')
     
     else:
-        flash (f'Invalue Input.')
-        return redirect(f'/pets/{pet_id}')
+        return render_template('pet_edit_form.html', pet=pet, form=form)
     
 
    
-
+@app.route('/pets/<int:pet_id>/delete', methods=['POST'])
+def delete_pet(pet_id):
+    
+    pet = Pet.query.get_or_404(pet_id)
+    if pet:
+        db.session.delete(pet)
+        db.session.commit()
+        return redirect('/')
+        flash (f'Pet has been deleted')
 
     
 if __name__ == '__main__':
